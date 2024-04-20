@@ -6,6 +6,7 @@ import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
+import MapView from 'react-native-maps';
 
 const Tab = createBottomTabNavigator()
 
@@ -73,13 +74,19 @@ const Users = (props)=> {
 }
 
 const MapPage = ()=> {
+    const regionInfos={
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
+
     return (
-        <View className='flex-1 mt-[30px]'>
-            <View className="">
-                <Text className="text-red-300">Alane</Text>
-                <Text className="text-yellow-300">Bryan</Text>
-                <Text className='text-blue-300'>Kuate</Text>
-            </View>
+        <View className='flex-1 justify-end items-center'>
+           <MapView
+                className='flex-1'
+                region={regionInfos}
+           />
         </View>
     )
 }

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View, SafeAreaView, TextInputBase, Image, Pressable, Alert } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View, SafeAreaView, TextInputBase, Image, Pressable, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import Svg, { Path, LinearGradient, Stop, Defs } from 'react-native-svg'
 import { Ionicons } from '@expo/vector-icons';
 import { sendPasswordResetEmail as passwordReset } from 'firebase/auth'
@@ -11,84 +11,89 @@ export default function ForgetPassword(props) {
   const [displayBtn, setDisplayBtn] = useState(false)
   const [email, setEmail] = useState('')
 
-  useEffect(()=> {
-    if(email !='') {
-      setDisplayBtn(true)}
+  useEffect(() => {
+    if (email != '') {
+      setDisplayBtn(true)
+    }
     else {
-      setDisplayBtn(false)}
+      setDisplayBtn(false)
+    }
   }, [email])
- 
+
   const handlePress = () => {
     activate ? setActivate(false) : setActivate(true)
   }
 
-  const handleSubmit=()=> {
+  const handleSubmit = () => {
     passwordReset(auth, email)
-    .then(() => {
+      .then(() => {
         Alert.alert("Consultez votre boite mail pour changer votre mot de passe")
         setEmail("")
         setTimeout(() => {
-            props.navigation.navigate('Login')
+          props.navigation.navigate('Login')
         }, 5000);
-    })
-    .catch(error => {
-      if (error.code === 'auth/network-request-failed') {
-        Alert.alert("Veuillez vous connecter à internet")
-      }
-      if (error.code === 'auth/invalid-email') {
-        Alert.alert("Votre adresse email est invalide")
-        setEmail('')
-      }
-    })
+      })
+      .catch(error => {
+        if (error.code === 'auth/network-request-failed') {
+          Alert.alert("Veuillez vous connecter à internet")
+        }
+        if (error.code === 'auth/invalid-email') {
+          Alert.alert("Votre adresse email est invalide")
+          setEmail('')
+        }
+      })
   }
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <View className='flex-1'>
-        <View className='absolute -right-32 top-[10px] h-[450px] w-full rotate-45'>
-          <SvgDeux />
-        </View>
-        <View className='absolute -right-24 top-[20px] h-[450px] rotate-45 w-full'>
-          <SvgUn />
-        </View>
-        <View className='mt-[300px] flex-1'>
-          <Text style={{ fontFamily: 'PlatypiLight'}} className='font-bold text-center text-6xl'>Hello</Text>
-          <Text style={{ fontFamily: 'PlatypiLight'}} className='text-center font-extralight text-xl'>Récupérez votre compte</Text>
-          <View className='mt-4 ml-4 space-y-5'>
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.icon}
-                source={require('../assets/email.jpg')}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={email => setEmail(email)}
-              />
+    <TouchableWithoutFeedback
+      onPress={() => Keyboard.dismiss()}>
+      <SafeAreaView className='flex-1 bg-white'>
+        <View className='flex-1'>
+          <View className='absolute -right-32 top-[10px] h-[450px] w-full rotate-45'>
+            <SvgDeux />
+          </View>
+          <View className='absolute -right-24 top-[20px] h-[450px] rotate-45 w-full'>
+            <SvgUn />
+          </View>
+          <View className='mt-[300px] flex-1'>
+            <Text style={{ fontFamily: 'PlatypiLight' }} className='font-bold text-center text-6xl'>Hello</Text>
+            <Text style={{ fontFamily: 'PlatypiLight' }} className='text-center font-extralight text-xl'>Récupérez votre compte</Text>
+            <View className='mt-4 ml-4 space-y-5'>
+              <View style={styles.inputContainer}>
+                <Image
+                  style={styles.icon}
+                  source={require('../assets/email.jpg')}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={email => setEmail(email)}
+                />
+              </View>
+            </View>
+
+            <View className='items-center justify-center mr-0 space-x-1 flex-row mt-20'>
+              <Text style={{ fontFamily: 'PlatypiLight' }} className='text-2xl font-thin'>Valider</Text>
+
+              {
+                displayBtn && <Pressable onPress={handleSubmit}>
+                  <View className='rounded-full items-center justify-center bg-orange-400 h-[55px] w-[75px]'>
+                    <Ionicons name="arrow-forward" size={40} color="white" />
+                  </View>
+                </Pressable>
+              }
+
+            </View>
+            <View className='flex-row mt-[60px] justify-center space-x-1'>
+              <Text className='font-extralight'>Vous n'avez pas encore de compte ?</Text>
+              <Pressable onPress={() => props.navigation.push('SignUp')}><Text className='font text-base underline -mt-1'>Créez-en </Text></Pressable>
             </View>
           </View>
-
-          <View className='items-center justify-center mr-0 space-x-1 flex-row mt-20'>
-            <Text style={{ fontFamily: 'PlatypiLight'}} className='text-2xl font-thin'>Valider</Text>
-
-            {
-              displayBtn && <Pressable onPress={handleSubmit}>
-                <View className='rounded-full items-center justify-center bg-orange-400 h-[55px] w-[75px]'>
-                    <Ionicons name="arrow-forward" size={40} color="white" />
-                </View>
-              </Pressable>
-            }
-            
-          </View>
-          <View className='flex-row mt-[60px] justify-center space-x-1'>
-            <Text className='font-extralight'>Vous n'avez pas encore de compte ?</Text>
-            <Pressable onPress={()=> props.navigation.push('SignUp')}><Text className='font text-base underline -mt-1'>Créez-en </Text></Pressable>
-          </View> 
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   )
 }
 

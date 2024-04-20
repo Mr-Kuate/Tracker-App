@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View, SafeAreaView, TextInputBase, Image, Pressable, Alert} from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View, SafeAreaView, TextInputBase, Image, Pressable, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Svg, { Path, LinearGradient, Stop, Defs } from 'react-native-svg'
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebaseConfig'
 // import auth from '@react-native-firebase/auth';
-import { signInWithEmailAndPassword} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 
 export default function Login(props) {
@@ -15,37 +15,39 @@ export default function Login(props) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState({})
 
-  useEffect(()=> {
-    if(email !='' && password !='' && password.length >=5) {
-      setDisplayBtn(true)}
+  useEffect(() => {
+    if (email != '' && password != '' && password.length >= 5) {
+      setDisplayBtn(true)
+    }
     else {
-      setDisplayBtn(false)}
+      setDisplayBtn(false)
+    }
 
   }, [email, password])
- 
+
   const handlePress = () => {
     activate ? setActivate(false) : setActivate(true)
   }
-  
-  const handleSubmit = () =>{
+
+  const handleSubmit = () => {
     signInWithEmailAndPassword(auth, email, password).then(userCredentials => {
-        const user = userCredentials.user
-        console.log(user.email)
-      }).then(() =>{
-        console.log('Connecté')
-        props.navigation.push('Welcome')
-        setEmail('')
-        setPassword('')
-      }).catch(error =>{
-        if (error.code === 'auth/invalid-login-credentials') {
-          Alert.alert("Votre mot de passe est invalide")
-        }
-        if (error.code === 'auth/invalid-email') {
-          Alert.alert("Votre adresse email est invalide")
-        }
-        if (error.code === 'auth/network-request-failed') {
-          Alert.alert("Veuillez vous connecter à internet")
-        }
+      const user = userCredentials.user
+      console.log(user.email)
+    }).then(() => {
+      console.log('Connecté')
+      props.navigation.push('Welcome')
+      setEmail('')
+      setPassword('')
+    }).catch(error => {
+      if (error.code === 'auth/invalid-login-credentials') {
+        Alert.alert("Votre mot de passe est invalide")
+      }
+      if (error.code === 'auth/invalid-email') {
+        Alert.alert("Votre adresse email est invalide")
+      }
+      if (error.code === 'auth/network-request-failed') {
+        Alert.alert("Veuillez vous connecter à internet")
+      }
       console.log(error.message)
       setEmail('')
       setPassword('')
@@ -54,86 +56,89 @@ export default function Login(props) {
   }
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <View className='flex-1'>
-        <View className='absolute -right-32 top-[10px] h-[450px] w-full rotate-45'>
-          <SvgDeux />
-        </View>
-        <View className='absolute -right-24 top-[20px] h-[450px] rotate-45 w-full'>
-          <SvgUn />
-        </View>
-        <View className='mt-[300px] flex-1'>
-          <Text style={{ fontFamily: 'PlatypiLight'}} className='font-bold text-center text-6xl'>Hello</Text>
-          <Text style={{ fontFamily: 'PlatypiLight'}} className='text-center font-extralight text-xl'>Connectez vous à votre compte</Text>
-          <View className='mt-4 ml-4 space-y-5'>
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.icon}
-                source={require('../assets/email.jpg')}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={email => setEmail(email)}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.icon}
-                source={require('../assets/password.png')}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Mot de passe"
-                secureTextEntry={!activate}
-                value={password}
-                onChangeText={password => setPassword(password)}
-              />
-              {
-                activate ? (<Pressable onPress={handlePress}>
-                  <Image
-                    style={styles.icon}
-                    source={require('../assets/oeil.png')}
-                  />
-                </Pressable>) :
-                  (<Pressable onPress={handlePress}>
+    <TouchableWithoutFeedback
+      onPress={() => Keyboard.dismiss()}>
+      <SafeAreaView className='flex-1 bg-white'>
+        <View className='flex-1'>
+          <View className='absolute -right-32 top-[10px] h-[450px] w-full rotate-45'>
+            <SvgDeux />
+          </View>
+          <View className='absolute -right-24 top-[20px] h-[450px] rotate-45 w-full'>
+            <SvgUn />
+          </View>
+          <View className='mt-[300px] flex-1'>
+            <Text style={{ fontFamily: 'PlatypiLight' }} className='font-bold text-center text-6xl'>Hello</Text>
+            <Text style={{ fontFamily: 'PlatypiLight' }} className='text-center font-extralight text-xl'>Connectez vous à votre compte</Text>
+            <View className='mt-4 ml-4 space-y-5'>
+              <View style={styles.inputContainer}>
+                <Image
+                  style={styles.icon}
+                  source={require('../assets/email.jpg')}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={email => setEmail(email)}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Image
+                  style={styles.icon}
+                  source={require('../assets/password.png')}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Mot de passe"
+                  secureTextEntry={!activate}
+                  value={password}
+                  onChangeText={password => setPassword(password)}
+                />
+                {
+                  activate ? (<Pressable onPress={handlePress}>
                     <Image
                       style={styles.icon}
-                      source={require('../assets/barre.jpg')}
+                      source={require('../assets/oeil.png')}
                     />
-                  </Pressable>)
+                  </Pressable>) :
+                    (<Pressable onPress={handlePress}>
+                      <Image
+                        style={styles.icon}
+                        source={require('../assets/barre.jpg')}
+                      />
+                    </Pressable>)
+                }
+              </View>
+            </View>
+            <View className='items-end mr-10 mt-4'>
+              <Pressable onPress={() => props.navigation.push('ForgetPassword')}>
+                <Text className='text-base font-light text-gray-400'>Mot de passe oublié ?</Text>
+              </Pressable>
+              {
+                error && <Text className='text-red-400 text-base text-center'>{error.message}</Text>
               }
+
+            </View>
+            <View className='items-center justify-end mr-10 space-x-1 flex-row mt-20'>
+              <Text style={{ fontFamily: 'PlatypiLight' }} className='text-2xl font-thin'>Se Connecter</Text>
+              {
+                displayBtn && <Pressable onPress={handleSubmit}>
+                  <View className='rounded-full items-center justify-center bg-orange-400 h-[55px] w-[75px]'>
+                    <Ionicons name="arrow-forward" size={40} color="white" />
+                  </View>
+                </Pressable>
+              }
+
+            </View>
+            <View className='flex-row mt-[60px] justify-center space-x-1'>
+              <Text className='font-extralight'>Vous n'avez pas encore de compte ?</Text>
+              <Pressable onPress={() => props.navigation.push('SignUp')}><Text className='font text-base underline -mt-1'>Créez-en </Text></Pressable>
             </View>
           </View>
-          <View className='items-end mr-10 mt-4'>
-            <Pressable onPress={()=> props.navigation.push('ForgetPassword')}>
-              <Text className='text-base font-light text-gray-400'>Mot de passe oublié ?</Text>
-            </Pressable>
-            {
-              error && <Text className='text-red-400 text-base text-center'>{error.message}</Text>
-            }
-            
-          </View>
-          <View className='items-center justify-end mr-10 space-x-1 flex-row mt-20'>
-            <Text style={{ fontFamily: 'PlatypiLight'}} className='text-2xl font-thin'>Se Connecter</Text>
-            {
-              displayBtn && <Pressable onPress={handleSubmit}>
-                <View className='rounded-full items-center justify-center bg-orange-400 h-[55px] w-[75px]'>
-                    <Ionicons name="arrow-forward" size={40} color="white" />
-                </View>
-              </Pressable>
-            }
-            
-          </View>
-          <View className='flex-row mt-[60px] justify-center space-x-1'>
-            <Text className='font-extralight'>Vous n'avez pas encore de compte ?</Text>
-            <Pressable onPress={()=> props.navigation.push('SignUp')}><Text className='font text-base underline -mt-1'>Créez-en </Text></Pressable>
-          </View> 
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   )
 }
 

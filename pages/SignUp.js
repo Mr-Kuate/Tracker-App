@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View, SafeAreaView, TextInputBase, Image, Pressable, Alert} from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View, SafeAreaView, TextInputBase, Image, Pressable, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import Svg, { Path, LinearGradient, Stop, Defs } from 'react-native-svg'
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebaseConfig';
@@ -21,12 +21,12 @@ const SignUp = (props) => {
 
   const handleSubmit = () => {
     createUserWithEmailAndPassword(auth, email, password).then(userCredentials => {
-        const user = userCredentials.user
-        console.log(user.email)
-      }).then(() =>{
-        console.log('Envoi du formulaire')
-        props.navigation.push('Welcome')
-      }).catch(error =>{
+      const user = userCredentials.user
+      console.log(user.email)
+    }).then(() => {
+      console.log('Envoi du formulaire')
+      props.navigation.push('Welcome')
+    }).catch(error => {
       if (error.code === 'auth/email-already-in-use') {
         setEmail('')
         setPassword('')
@@ -40,128 +40,132 @@ const SignUp = (props) => {
       setError(error.message)
       setDisplayBtn(false)
     })
-    
+
   }
-  
-  useEffect(()=> {
-    if(email !='' && password !='' && password.length >=5 && nom != '' && phone != null) {
-      setDisplayBtn(true)}
+
+  useEffect(() => {
+    if (email != '' && password != '' && password.length >= 5 && nom != '' && phone != null) {
+      setDisplayBtn(true)
+    }
     else {
-      setDisplayBtn(false)}
+      setDisplayBtn(false)
+    }
   }, [email, password])
- 
+
   const handlePress = () => {
     activate ? setActivate(false) : setActivate(true)
   }
 
   return (
-    <SafeAreaView className='flex-1'>
-      <View className='flex-1'>
-        <View className='absolute -right-32 -top-[80px] rotate-6 -z-10 h-[350px] w-full'>
-          <SvgUn />
-        </View>
-        <View className='absolute -left-40 top-[250px] -rotate-12 -z-10 h-[400px] w-full'>
-          <SvgDeux/>
-        </View>
-        <View className='flex-1 mt-[200px]'>
-          <Text style={{ fontFamily: 'PlatypiLight'}}  className='text-4xl text-center'>Créez votre compte</Text>
-          <View className='mt-4 ml-4 space-y-5'>
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.icon}
-                source={require('../assets/user.png')}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Noms et prénoms"
-                keyboardType='default'
-                value={nom}
-                onChangeText={nom => setNom(nom)}
-              />
-            </View>
-  
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.icon}
-                source={require('../assets/phone.png')}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Téléphone"
-                keyboardType="numeric"
-                value={phone}
-                onChangeText={phone => setPhone(phone)}
-              />
-            </View>
+    <TouchableWithoutFeedback
+      onPress={() => Keyboard.dismiss()}>
+      <SafeAreaView className='flex-1'>
+        <View className='flex-1'>
+          <View className='absolute -right-32 -top-[80px] rotate-6 -z-10 h-[350px] w-full'>
+            <SvgUn />
+          </View>
+          <View className='absolute -left-40 top-[250px] -rotate-12 -z-10 h-[400px] w-full'>
+            <SvgDeux />
+          </View>
+          <View className='flex-1 mt-[200px]'>
+            <Text style={{ fontFamily: 'PlatypiLight' }} className='text-4xl text-center'>Créez votre compte</Text>
+            <View className='mt-4 ml-4 space-y-5'>
+              <View style={styles.inputContainer}>
+                <Image
+                  style={styles.icon}
+                  source={require('../assets/user.png')}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Noms et prénoms"
+                  keyboardType='default'
+                  value={nom}
+                  onChangeText={nom => setNom(nom)}
+                />
+              </View>
 
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.icon}
-                source={require('../assets/email.jpg')}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={email => setEmail(email)}
-              />
-            </View>
+              <View style={styles.inputContainer}>
+                <Image
+                  style={styles.icon}
+                  source={require('../assets/phone.png')}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Téléphone"
+                  keyboardType="numeric"
+                  value={phone}
+                  onChangeText={phone => setPhone(phone)}
+                />
+              </View>
 
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.icon}
-                source={require('../assets/password.png')}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Mot de passe"
-                keyboardType='default'
-                secureTextEntry={!activate}
-                value={password}
-                onChangeText={password => setPassword(password)}
-              />
-              {
-                activate ? (<Pressable onPress={handlePress}>
-                  <Image
-                    style={styles.icon}
-                    source={require('../assets/oeil.png')}
-                  />
-                </Pressable>) :
-                  (<Pressable onPress={handlePress}>
+              <View style={styles.inputContainer}>
+                <Image
+                  style={styles.icon}
+                  source={require('../assets/email.jpg')}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={email => setEmail(email)}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Image
+                  style={styles.icon}
+                  source={require('../assets/password.png')}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Mot de passe"
+                  keyboardType='default'
+                  secureTextEntry={!activate}
+                  value={password}
+                  onChangeText={password => setPassword(password)}
+                />
+                {
+                  activate ? (<Pressable onPress={handlePress}>
                     <Image
                       style={styles.icon}
-                      source={require('../assets/barre.jpg')}
+                      source={require('../assets/oeil.png')}
                     />
-                  </Pressable>)
+                  </Pressable>) :
+                    (<Pressable onPress={handlePress}>
+                      <Image
+                        style={styles.icon}
+                        source={require('../assets/barre.jpg')}
+                      />
+                    </Pressable>)
+                }
+              </View>
+            </View>
+
+            <View className='items-end mr-10 mt-0'>
+              {
+                error && <Text className='text-base text-red-400'>{error}</Text>
+              }
+
+            </View>
+            <View className='items-center justify-center mr-0 space-x-1 flex-row mt-20'>
+              <Text style={{ fontFamily: 'PlatypiLight' }} className='text-2xl font-thin'>Créer le compte</Text>
+              {
+                displayBtn && <Pressable onPress={handleSubmit}>
+                  <View className='rounded-full items-center justify-center bg-orange-400 h-[55px] w-[75px]'>
+                    <Ionicons name="arrow-forward" size={40} color="white" />
+                  </View>
+                </Pressable>
               }
             </View>
+            <View className='flex-row mt-[60px] justify-center space-x-1'>
+              <Text className='font-extralight'>Vous avez déjà un compte ?</Text>
+              <Pressable onPress={() => props.navigation.push('Login')}><Text className='font text-base underline -mt-1'>Connectez-vous </Text></Pressable>
+            </View>
           </View>
-
-          <View className='items-end mr-10 mt-0'>
-            {
-              error && <Text className='text-base text-red-400'>{error}</Text>
-            }
-            
-          </View>
-          <View className='items-center justify-center mr-0 space-x-1 flex-row mt-20'>
-            <Text style={{ fontFamily: 'PlatypiLight'}} className='text-2xl font-thin'>Créer le compte</Text>
-            {
-              displayBtn && <Pressable onPress={handleSubmit}>
-                <View className='rounded-full items-center justify-center bg-orange-400 h-[55px] w-[75px]'>
-                    <Ionicons name="arrow-forward" size={40} color="white" />
-                </View>
-              </Pressable>
-            }
-          </View>
-          <View className='flex-row mt-[60px] justify-center space-x-1'>
-            <Text className='font-extralight'>Vous avez déjà un compte ?</Text>
-            <Pressable onPress={()=> props.navigation.push('Login')}><Text className='font text-base underline -mt-1'>Connectez-vous </Text></Pressable>
-          </View> 
         </View>
-      </View>
-    </SafeAreaView>
-
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   )
 }
 
